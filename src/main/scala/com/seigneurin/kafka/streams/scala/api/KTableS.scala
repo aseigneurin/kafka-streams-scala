@@ -2,6 +2,7 @@ package com.seigneurin.kafka.streams.scala.api
 
 import com.seigneurin.kafka.streams.scala.api.ImplicitConversions._
 import org.apache.kafka.common.serialization.Serde
+import org.apache.kafka.streams.KeyValue
 import org.apache.kafka.streams.kstream._
 import org.apache.kafka.streams.processor.StreamPartitioner
 
@@ -114,9 +115,23 @@ class KTableS[K, V](val inner: KTable[K, V]) {
     inner.to(keySerde, valSerde, partitionerJ, topic)
   }
 
-  //  def groupBy[KR, VR](selector: KeyValueMapper[_ >: K, _ >: V, KeyValue[KR, VR]]): KGroupedTable[KR, VR]
-  //
-  //  def groupBy[KR, VR](selector: KeyValueMapper[_ >: K, _ >: V, KeyValue[KR, VR]], keySerde: Serde[KR], valueSerde: Serde[VR]): KGroupedTable[KR, VR]
+  def groupBy[KR, VR](selector: (K, V) => (KR, VR)): KGroupedTableS[KR, VR] = {
+    val selectorJ: KeyValueMapper[K, V, KeyValue[KR, VR]] = (k: K, v: V) => {
+      val res = selector(k, v)
+      new KeyValue[KR, VR](res._1, res._2)
+    }
+    inner.groupBy(selectorJ)
+  }
+
+  def groupBy[KR, VR](selector: (K, V) => (KR, VR),
+                      keySerde: Serde[KR],
+                      valueSerde: Serde[VR]): KGroupedTableS[KR, VR] = {
+    val selectorJ: KeyValueMapper[K, V, KeyValue[KR, VR]] = (k: K, v: V) => {
+      val res = selector(k, v)
+      new KeyValue[KR, VR](res._1, res._2)
+    }
+    inner.groupBy(selectorJ, keySerde, valueSerde)
+  }
 
   def join[VO, VR](other: KTableS[K, VO],
                    joiner: (V, VO) => VR): KTableS[K, VR] = {
