@@ -4,7 +4,7 @@ import java.util.regex.Pattern
 
 import com.seigneurin.kafka.streams.scala.api.ImplicitConversions._
 import org.apache.kafka.common.serialization.Serde
-import org.apache.kafka.streams.kstream.{GlobalKTable, KStream, KStreamBuilder}
+import org.apache.kafka.streams.kstream.{GlobalKTable, KStreamBuilder}
 import org.apache.kafka.streams.processor.TopologyBuilder
 
 object KStreamBuilderS {
@@ -46,7 +46,9 @@ object KStreamBuilderS {
                        (implicit keySerde: Serde[K], valSerde: Serde[V]): GlobalKTable[K, V] =
     inner.globalTable(keySerde, valSerde, topic, storeName)
 
-  def merge[K, V](streams: KStream[K, V]*): KStream[K, V] =
-    inner.merge(streams: _*)
+  def merge[K, V](streams: KStreamS[K, V]*): KStreamS[K, V] = {
+    val streamsJ = streams.map { streamS => streamS.inner }
+    inner.merge(streamsJ: _*)
+  }
 
 }
