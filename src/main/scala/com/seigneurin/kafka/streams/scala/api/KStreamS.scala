@@ -67,17 +67,16 @@ class KStreamS[K, V](val inner: KStream[K, V]) {
   def print(keySerde: Serde[K], valSerde: Serde[V], streamName: String) =
     inner.print(keySerde, valSerde, streamName)
 
-  def writeAsText(filePath: String) =
-    inner.writeAsText(filePath)
-
-  def writeAsText(filePath: String, streamName: String) =
-    inner.writeAsText(filePath, streamName)
-
-  def writeAsText(filePath: String, keySerde: Serde[K], valSerde: Serde[V]) =
+  def writeAsText(filePath: String)
+                 (implicit keySerde: Serde[K], valSerde: Serde[V]) = {
     inner.writeAsText(filePath, keySerde, valSerde)
+  }
 
-  def writeAsText(filePath: String, streamName: String, keySerde: Serde[K], valSerde: Serde[V]) =
+  def writeAsText(filePath: String,
+                  streamName: String)
+                 (implicit keySerde: Serde[K], valSerde: Serde[V]) = {
     inner.writeAsText(filePath, streamName, keySerde, valSerde)
+  }
 
   def foreach(action: (K, V) => Unit): Unit = {
     val actionJ: ForeachAction[_ >: K, _ >: V] = (k: K, v: V) => action(k, v)
@@ -93,51 +92,27 @@ class KStreamS[K, V](val inner: KStream[K, V]) {
       .map(kstream => wrapKStream(kstream))
   }
 
-  def through(topic: String): KStreamS[K, V] =
-    inner.through(topic)
-
-  def through(partitioner: (K, V, Int) => Int,
-              topic: String): KStreamS[K, V] = {
-    val partitionerJ: StreamPartitioner[K, V] =
-      (key: K, value: V, numPartitions: Int) => partitioner(key, value, numPartitions)
-    inner.through(partitionerJ, topic)
-  }
-
-  def through(keySerde: Serde[K],
-              valSerde: Serde[V],
-              topic: String): KStreamS[K, V] = {
+  def through(topic: String)
+             (implicit keySerde: Serde[K], valSerde: Serde[V]): KStreamS[K, V] = {
     inner.through(keySerde, valSerde, topic)
   }
 
-  def through(keySerde: Serde[K],
-              valSerde: Serde[V],
-              partitioner: (K, V, Int) => Int,
-              topic: String): KStreamS[K, V] = {
+  def through(partitioner: (K, V, Int) => Int,
+              topic: String)
+             (implicit keySerde: Serde[K], valSerde: Serde[V]): KStreamS[K, V] = {
     val partitionerJ: StreamPartitioner[K, V] =
       (key: K, value: V, numPartitions: Int) => partitioner(key, value, numPartitions)
     inner.through(keySerde, valSerde, partitionerJ, topic)
   }
 
-  def to(topic: String) =
-    inner.to(topic)
-
-  def to(partitioner: (K, V, Int) => Int,
-         topic: String) = {
-    val partitionerJ: StreamPartitioner[K, V] =
-      (key: K, value: V, numPartitions: Int) => partitioner(key, value, numPartitions)
-    inner.to(partitionerJ, topic)
-  }
-
-  def to(keySerde: Serde[K],
-         valSerde: Serde[V],
-         topic: String) = {
+  def to(topic: String)
+        (implicit keySerde: Serde[K], valSerde: Serde[V]) = {
     inner.to(keySerde, valSerde, topic)
   }
 
-  def to(keySerde: Serde[K],
-         valSerde: Serde[V],
-         partitioner: (K, V, Int) => Int,
-         topic: String) = {
+  def to(partitioner: (K, V, Int) => Int,
+         topic: String)
+        (implicit keySerde: Serde[K], valSerde: Serde[V]) = {
     val partitionerJ: StreamPartitioner[K, V] =
       (key: K, value: V, numPartitions: Int) => partitioner(key, value, numPartitions)
     inner.to(keySerde, valSerde, partitionerJ, topic)
@@ -178,12 +153,8 @@ class KStreamS[K, V](val inner: KStream[K, V]) {
     inner.process(processorSupplierJ, stateStoreNames: _*)
   }
 
-  def groupByKey: KGroupedStreamS[K, V] =
-    inner.groupByKey()
-
-  def groupByKey(keySerde: Serde[K], valSerde: Serde[V]): KGroupedStreamS[K, V] = {
+  def groupByKey(implicit keySerde: Serde[K], valSerde: Serde[V]): KGroupedStreamS[K, V] =
     inner.groupByKey(keySerde, valSerde)
-  }
 
   def groupBy[KR](selector: (K, V) => KR): KGroupedStreamS[KR, V] = {
     val selectorJ: KeyValueMapper[K, V, KR] = (k: K, v: V) => selector(k, v)
