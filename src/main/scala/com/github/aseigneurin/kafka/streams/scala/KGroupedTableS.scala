@@ -1,14 +1,12 @@
 package com.github.aseigneurin.kafka.streams.scala
 
+import com.github.aseigneurin.kafka.streams.scala.ImplicitConversions._
 import org.apache.kafka.common.serialization.Serde
 import org.apache.kafka.streams.kstream._
 import org.apache.kafka.streams.processor.StateStoreSupplier
 import org.apache.kafka.streams.state.KeyValueStore
 
 class KGroupedTableS[K, V](inner: KGroupedTable[K, V]) {
-
-  implicit def wrapKTable[K, V](ktable: KTable[K, V]): KTableS[K, V] =
-    new KTableS[K, V](ktable)
 
   def count(storeName: String): KTableS[K, Long] = {
     inner.count(storeName)

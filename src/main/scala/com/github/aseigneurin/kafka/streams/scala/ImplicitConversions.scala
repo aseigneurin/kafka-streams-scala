@@ -2,6 +2,8 @@ package com.github.aseigneurin.kafka.streams.scala
 
 import org.apache.kafka.streams.kstream.{KGroupedStream, KGroupedTable, KStream, KTable}
 
+import scala.language.implicitConversions
+
 object ImplicitConversions {
 
   implicit def wrapKStream[K, V](inner: KStream[K, V]): KStreamS[K, V] =
