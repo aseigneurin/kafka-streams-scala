@@ -1,8 +1,8 @@
-package com.seigneurin.kafka.streams.scala.api
+package com.github.aseigneurin.kafka.streams.scala.api
 
 import java.util.regex.Pattern
 
-import com.seigneurin.kafka.streams.scala.api.ImplicitConversions._
+import com.github.aseigneurin.kafka.streams.scala.api.ImplicitConversions._
 import org.apache.kafka.common.serialization.Serde
 import org.apache.kafka.streams.kstream.{GlobalKTable, KStreamBuilder}
 import org.apache.kafka.streams.processor.TopologyBuilder
