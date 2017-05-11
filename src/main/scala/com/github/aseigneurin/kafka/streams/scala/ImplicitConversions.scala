@@ -1,4 +1,4 @@
-package com.github.aseigneurin.kafka.streams.scala.api
+package com.github.aseigneurin.kafka.streams.scala
 
 import org.apache.kafka.streams.kstream.{KGroupedStream, KGroupedTable, KStream, KTable}
 

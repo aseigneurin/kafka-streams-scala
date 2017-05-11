@@ -1,6 +1,6 @@
-package com.github.aseigneurin.kafka.streams.scala.api
+package com.github.aseigneurin.kafka.streams.scala
 
-import com.github.aseigneurin.kafka.streams.scala.api.ImplicitConversions._
+import com.github.aseigneurin.kafka.streams.scala.ImplicitConversions._
 import org.apache.kafka.common.serialization.Serde
 import org.apache.kafka.streams.KeyValue
 import org.apache.kafka.streams.kstream._

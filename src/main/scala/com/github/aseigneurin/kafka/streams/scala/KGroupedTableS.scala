@@ -1,4 +1,4 @@
-package com.github.aseigneurin.kafka.streams.scala.api
+package com.github.aseigneurin.kafka.streams.scala
 
 import org.apache.kafka.common.serialization.Serde
 import org.apache.kafka.streams.kstream._
