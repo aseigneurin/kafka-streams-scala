@@ -7,7 +7,13 @@ This is a thin Scala wrapper for the [Kafka Streams API](https://kafka.apache.or
 - when using a `flatMap` operation, this lets you use a Scala `Iterable`
 - `Serde`s (Serializers/Deserializers) can be implicitly found in the scope
 
-## Usage
+This API also contains a few `Serde`s (Serializers/Deserializers):
+
+- to convert Scala `Int`/`Long`/`Double` to/from their binary representation
+- to convert Scala `Int`/`Long`/`Double` to/from string representation
+- to convert case classes to/from JSON
+
+## Usage of the Kafka Streams API in Scala
 
 The main objects are:
 
@@ -65,6 +71,54 @@ In this case, just pass the `Serde` explicitly:
 
 ```scala
 val usersByIdStream = KStreamBuilderS.stream[String, User]("users-by-id")(stringSerde, userSerde)
+```
+
+## Usage of the Serdes in Scala
+
+To convert Scala `Int`/`Long`/`Double` to/from their binary representation:
+
+```scala
+import com.github.aseigneurin.kafka.serialization.scala._
+
+implicit val intSerde = IntAsStringSerde
+implicit val longSerde = LongAsStringSerde
+implicit val doubleSerde = DoubleAsStringSerde
+```
+
+To convert Scala `Int`/`Long`/`Double` to/from string representation:
+
+```scala
+import com.github.aseigneurin.kafka.serialization.scala._
+
+implicit val intSerde = IntSerde
+implicit val longSerde = LongSerde
+implicit val doubleSerde = DoubleSerde
+```
+
+To convert case classes to/from JSON:
+
+- define a `case class`
+- create an instance of `JsonSerde` with the case class as the generic type
+
+Example:
+
+```scala
+import com.github.aseigneurin.kafka.serialization.scala._
+
+case class User(name: String)
+
+implicit val stringSerde = Serdes.String
+implicit val userSerde = new JsonSerde[User]
+
+// read JSON -> case class
+KStreamBuilderS.stream[String, User]("users")
+  .mapValues { user => user.name }
+  .to("names")
+
+// write case class -> JSON
+KStreamBuilderS.stream[String, String]("names")
+  .mapValues { name => User(name) }
+  .to("users")
 ```
 
 ## Example
