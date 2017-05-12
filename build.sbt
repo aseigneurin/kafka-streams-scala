@@ -8,5 +8,12 @@ scalaVersion := "2.12.2"
 
 scalacOptions := Seq("-unchecked", "-deprecation")
 
+// Kafka
 libraryDependencies += "org.apache.kafka" % "kafka-streams" % "0.10.2.0"
+// JSON
+libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.8.8"
+// logging
+libraryDependencies += "org.slf4j" % "slf4j-log4j12" % "1.7.25"
+libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0"
 
+publishTo := Some(Resolver.file("file", new File(Path.userHome.absolutePath + "/.m2/repository")))
