@@ -4,6 +4,7 @@ This is a thin Scala wrapper for the [Kafka Streams API](https://kafka.apache.or
 
 - Scala lambda expressions can be used directly
 - when aggregating and counting, counts are converted from Java `Long`s to Scala `Long`s
+- when using a `flatMap` operation, this lets you use a Scala `Iterable`
 - `Serde`s (Serializers/Deserializers) can be implicitly found in the scope
 
 ## Usage
@@ -64,4 +65,31 @@ In this case, just pass the `Serde` explicitly:
 
 ```scala
 val usersByIdStream = KStreamBuilderS.stream[String, User]("users-by-id")(stringSerde, userSerde)
+```
+
+## Example
+
+This repository contains [a Scala version](https://github.com/aseigneurin/kafka-streams-scala/blob/master/src/test/scala/com/github/aseigneurin/kafka/streams/scala/WordCountDemo.scala) of [the Java Word Count Demo](https://github.com/apache/kafka/blob/trunk/streams/examples/src/main/java/org/apache/kafka/streams/examples/wordcount/WordCountDemo.java).
+
+Here is the code to implement a word count:
+
+```scala
+val props = new Properties()
+// ...
+
+implicit val stringSerde = Serdes.String
+implicit val longSerde = LongAsStringSerde
+
+val source = KStreamBuilderS.stream[String, String]("streams-file-input")
+
+val counts: KTableS[String, Long] = source
+  .flatMapValues { value => value.toLowerCase(Locale.getDefault).split(" ") }
+  .map { (_, value) => (value, value) }
+  .groupByKey
+  .count("Counts")
+
+counts.to("streams-wordcount-output")
+
+val streams = new KafkaStreams(KStreamBuilderS.inner, props)
+streams.start()
 ```
