@@ -1,6 +1,6 @@
 # kafka-streams-scala
 
-This is a thin Scala wrapper for the [Kafka Streams API](https://kafka.apache.org/documentation/streams). It does not intend to provide a Scala-idiomatic API, but rather intends to make the original API simpler to use from Scala. In particular, it provides the following adjustements:
+This is a thin Scala wrapper for the [Kafka Streams API](https://kafka.apache.org/documentation/streams). It does not intend to provide a Scala-idiomatic API, but rather intends to make the original API simpler to use from Scala. In particular, it provides the following adjustments:
 
 - Scala lambda expressions can be used directly
 - when aggregating and counting, counts are converted from Java `Long`s to Scala `Long`s
@@ -25,7 +25,7 @@ The main objects are:
 
 ### Using the builder
 
-With the original Java API, you would create an instance of `KStreamBuilder`, then use it to create streams or tables. Here, `KStreamsBuilderS` is an `object` thqt can be used directly:
+With the original Java API, you would create an instance of `KStreamBuilder`, then use it to create streams or tables. Here, `KStreamsBuilderS` is an `object` that can be used directly:
 
 ```scala
 val stream: KStreamS[String, String] = KStreamBuilderS.stream[String, String]("my-stream")
@@ -52,7 +52,7 @@ implicit val userSerde: Serde[User] = new MyUserSerde
 val usersByIdStream = KStreamBuilderS.stream[String, User]("users-by-id")
 ```
 
-Resolution is based on the type of the object to serialize/deserialize, so make sure you have a `Serve` of the appropriate type. If not, you should see an error such as:
+Resolution is based on the type of the object to serialize/deserialize, so make sure you have a `Serde` of the appropriate type. If not, you should see an error such as:
 
 ```
 Error:(87, 80) could not find implicit value for parameter keySerde: org.apache.kafka.common.serialization.Serde[String]
