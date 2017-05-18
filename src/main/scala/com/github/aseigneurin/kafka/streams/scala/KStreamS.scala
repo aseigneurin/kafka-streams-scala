@@ -6,7 +6,7 @@ import org.apache.kafka.streams.KeyValue
 import org.apache.kafka.streams.kstream._
 import org.apache.kafka.streams.processor.{Processor, ProcessorContext, ProcessorSupplier, StreamPartitioner}
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 class KStreamS[K, V](val inner: KStream[K, V]) {
 
