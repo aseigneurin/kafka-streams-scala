@@ -13,6 +13,10 @@ This API also contains a few `Serde`s (Serializers/Deserializers):
 - to convert Scala `Int`/`Long`/`Double` to/from string representation
 - to convert case classes to/from JSON
 
+Finally, the API provides the following extensions:
+
+- `KStreamS.split()` (see documentation below)
+
 ## Usage of the Kafka Streams API in Scala
 
 The main objects are:
@@ -146,4 +150,18 @@ counts.to("streams-wordcount-output")
 
 val streams = new KafkaStreams(KStreamBuilderS.inner, props)
 streams.start()
+```
+
+## Extensions
+
+### KStreamS.split()
+
+This method applies a predicate and returns two `KStreamS`s, one with the messages that match the predicate, and another one with the messages that don't match.
+
+The two `KStreamS`s are returned in a tuple that can be easily _deconstructed_:
+
+```scala
+def isValidMessage(v: ...): Boolean = ???
+
+val (goodMessages, badMessages) = deserializedMessages.split((k, v) => isValidMessage(v))
 ```

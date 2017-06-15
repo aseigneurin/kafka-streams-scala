@@ -263,4 +263,12 @@ class KStreamS[K, V](val inner: KStream[K, V]) {
     inner.leftJoin[GK, GV, RV](globalKTable, keyValueMapperJ, valueJoinerJ)
   }
 
+  // -- EXTENSIONS TO KAFKA STREAMS --
+
+  // applies the predicate to know what messages shuold go to the left stream (predicate == true)
+  // or to the right stream (predicate == false)
+  def split(predicate: (K, V) => Boolean): (KStreamS[K, V], KStreamS[K, V]) = {
+    (this.filter(predicate), this.filterNot(predicate))
+  }
+
 }
