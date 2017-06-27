@@ -4,9 +4,9 @@ organization := "com.github.aseigneurin"
 
 version := "0.0.1-SNAPSHOT"
 
-scalaVersion := "2.12.2"
+scalaVersion := "2.11.11"
 
-scalacOptions := Seq("-unchecked", "-deprecation")
+scalacOptions := Seq("-Xexperimental", "-unchecked", "-deprecation")
 
 // Kafka
 libraryDependencies += "org.apache.kafka" % "kafka-streams" % "0.10.2.0"
